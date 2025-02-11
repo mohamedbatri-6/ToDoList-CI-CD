@@ -1,0 +1,50 @@
+- name: Déploiement de l’application Next.js
+  hosts: webserver
+  become: yes
+  vars:
+    repo_url: "https://github.com/mohamedbatri-6/ToDoList-CI-CD.git"
+    app_dir: "/home/ubuntu/ToDoList-CD-CD"
+  tasks:
+    - name: Mettre à jour le système
+      apt:
+        update_cache: yes
+        upgrade: yes
+
+    - name: Installer Node.js et PM2
+      shell: |
+        curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+        apt-get install -y nodejs
+        npm install -g pm2
+
+    - name: Vérifier si le dossier du projet existe
+      stat:
+        path: "{{ app_dir }}/.git"
+      register: git_repo
+
+    - name: Cloner le projet s'il n'existe pas
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: main
+        force: yes
+      when: not git_repo.stat.exists
+
+    - name: Mettre à jour le projet si déjà cloné
+      shell: |
+        cd {{ app_dir }}
+        git reset --hard
+        git pull origin main
+      when: git_repo.stat.exists
+
+    - name: Installer les dépendances et builder
+      shell: |
+        cd {{ app_dir }}
+        npm install
+        npm run build
+
+    - name: Démarrer l’application avec PM2
+      shell: |
+        cd {{ app_dir }}
+        pm2 restart next-app || pm2 start node_modules/next/dist/bin/next --name "next-app" -- start
+        pm2 save
+

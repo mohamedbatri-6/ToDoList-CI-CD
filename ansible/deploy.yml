@@ -25,7 +25,7 @@
       git:
         repo: "{{ repo_url }}"
         dest: "{{ app_dir }}"
-        version: main
+        version: master
         force: yes
       when: not git_repo.stat.exists
 
@@ -33,7 +33,7 @@
       shell: |
         cd {{ app_dir }}
         git reset --hard
-        git pull origin main
+        git pull origin master
       when: git_repo.stat.exists
 
     - name: Installer les dépendances et builder

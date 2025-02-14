@@ -26,7 +26,7 @@ jobs:
       - name: Exécuter Ansible Playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
-          playbook: ansible/playbook.yml
+          playbook: ansible/deploy.yml
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           inventory: |
             [webserver]

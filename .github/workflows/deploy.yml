@@ -30,6 +30,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           inventory: |
             [webserver]
-            54.211.78.205 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
+            98.81.60.249 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
           options: "-u ubuntu"
 

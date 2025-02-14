@@ -1,0 +1,38 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔹 Récupérer le code du dépôt
+        uses: actions/checkout@v4
+
+      - name: 🔹 Ajouter la clé SSH privée et configurer SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          echo "StrictHostKeyChecking no" >> ~/.ssh/config
+          ssh-keyscan -H ${{ secrets.EC2_IP }} >> ~/.ssh/known_hosts
+
+      - name: 🔹 Vérifier la connexion SSH
+        run: ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.EC2_IP }} "echo 'Connexion SSH réussie'"
+
+      - name: 🔹 Installer Ansible
+        run: sudo apt update && sudo apt install -y ansible
+
+      - name: 🔹 Exécuter le playbook Ansible
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          playbook: ansible/deploy.yml
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          inventory: |
+            [webserver]
+            ${{ secrets.EC2_IP }} ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
+          options: "-u ubuntu"

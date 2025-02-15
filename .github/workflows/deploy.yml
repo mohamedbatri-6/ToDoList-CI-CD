@@ -27,6 +27,12 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && git pull"
 
+
+      - name: netoyer  les anciens  dependances
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && rm -rf node_modules package-lock.json"
+
+
       - name: installer les dependances
         run: |
           ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm install"

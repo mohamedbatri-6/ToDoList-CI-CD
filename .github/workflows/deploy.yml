@@ -23,13 +23,20 @@ jobs:
       - name: Vérifier la connexion SSH
         run: ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ubuntu@98.81.60.249 "echo 'Connexion SSH réussie'"
 
-      - name: Exécuter Ansible Playbook
-        uses: dawidd6/action-ansible-playbook@v2
-        with:
-          playbook: ansible/deploy.yml
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          inventory: |
-            [webserver]
-            98.81.60.249 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa
-          options: "-u ubuntu"
+      - name: mettre a jour le code avec git pull
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && git pull"
+
+      - name: installer les dependances
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm install"
+
+      - name: build du projet
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm run build"
+
+      - name: demarrer l'application avec PM2
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && pm2 start npm --name 'nextjs-app' -- run start"
+ 
 

@@ -5,7 +5,8 @@
   "scripts": {
     "test": "npm run test:frontend && npm run test:api",
     "test:api": "jest --config jest.config.api.js",
-    "test:frontend": "jest --config jest.config.js"
+    "test:frontend": "jest --config jest.config.js",
+    "build": "next build"
   },
   "dependencies": {
     "@prisma/client": "^6.4.1",

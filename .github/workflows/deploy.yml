@@ -35,11 +35,11 @@ jobs:
 
       - name: installer les dependances
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm install"
+          ssh -o ServerAliveInterval=60 -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm install"
 
       - name: build du projet
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm run build"
+          ssh -o ServerAliveInterval=60  -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm run build"
 
       - name: demarrer l'application avec PM2
         run: |

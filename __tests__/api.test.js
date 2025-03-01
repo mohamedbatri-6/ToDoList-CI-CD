@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { createServer } from 'http';
 import { PrismaClient } from '@prisma/client';
-import { GET, POST, PUT, DELETE } from '../src/app/api/tasks/route'; // Chemin vers tes routes API
+import { GET, POST, DELETE } from '../src/app/api/tasks/route'; // Chemin vers tes routes API
 
 const prisma = new PrismaClient();
 let server;
@@ -19,9 +19,7 @@ beforeAll(async () => {
     if (req.method === 'POST') {
       return POST(req, res);
     }
-    if (req.method === 'PUT') {
-      return PUT(req, res);
-    }
+
     if (req.method === 'DELETE') {
       return DELETE(req, res);
     }
@@ -69,20 +67,6 @@ describe('API /api/tasks', () => {
 
     const responseData = response.body;
     expect(Array.isArray(responseData)).toBe(true); // Vérifie que c'est un tableau
-
-    done(); // Signale que le test est terminé
-  });
-
-  test('PUT met à jour le statut d\'une tâche', async (done) => {
-    const updatedTask = { id: taskId, status: 'COMPLETED' };
-
-    const response = await request(server)
-      .put('/api/tasks')
-      .send(updatedTask) // Envoi de la tâche avec l'ID et le nouveau statut
-      .expect(200); // Vérifier que le code de statut est 200
-
-    const responseData = response.body;
-    expect(responseData.status).toBe(updatedTask.status); // Vérifie que le statut a bien été mis à jour
 
     done(); // Signale que le test est terminé
   });

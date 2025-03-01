@@ -28,20 +28,11 @@ jobs:
           ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && git pull"
 
 
-      - name: netoyer  les anciens  dependances
+
+      - name: Installer les dépendances
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && rm -rf node_modules package-lock.json"
-
-
-      - name: Installer les dépendances en local
-        run: npm install
+          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm install"
  
-      - name: Transférer les dépendances
-        run: |
-          tar -czf node_modules.tar.gz node_modules
-          scp -i ~/.ssh/id_rsa node_modules.tar.gz ubuntu@98.81.60.249:/home/ubuntu/ToDoList-CI-CD/
-          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && tar -xzf node_modules.tar.gz && rm node_modules.tar.gz"
-
     #  - name: Executer test d'imtegration
      #   run: |
       #    ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm run test:frontend" 

@@ -44,7 +44,7 @@ export default function Page() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-blue-500 p-6">
-      <h1 className="text-3xl font-bold text-white mb-4">TO-DO LIST3</h1>
+      <h1 className="text-3xl font-bold text-white mb-4">TO-DO LIST</h1>
       
       {/* Section pour ajouter une nouvelle tâche */}
       <div className="flex flex-col mb-6 space-y-4 w-full max-w-md">

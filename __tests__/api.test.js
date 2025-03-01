@@ -4,10 +4,13 @@ import { PrismaClient } from '@prisma/client';
 import { GET, POST, PUT, DELETE } from '../src/app/api/tasks/route'; // Chemin vers tes routes API
 
 const prisma = new PrismaClient();
-
 let server;
 
-beforeAll(() => {
+jest.setTimeout(10000); // Augmente le délai d'attente à 10 secondes pour tous les tests
+
+beforeAll(async () => {
+  console.log('Démarrage du serveur...');
+
   // Crée un serveur HTTP pour simuler les requêtes API
   server = createServer((req, res) => {
     if (req.method === 'GET') {
@@ -24,6 +27,14 @@ beforeAll(() => {
     }
     res.status(404).send('Not Found');
   });
+
+  // Connexion à la base de données via Prisma
+  try {
+    await prisma.$connect();
+    console.log('Connexion à la base de données réussie!');
+  } catch (error) {
+    console.error('Erreur de connexion à la base de données:', error);
+  }
 });
 
 afterAll(async () => {
@@ -34,7 +45,7 @@ afterAll(async () => {
 describe('API /api/tasks', () => {
   let taskId;
 
-  test('POST crée une nouvelle tâche', async () => {
+  test('POST crée une nouvelle tâche', async (done) => {
     const newTask = { name: 'Tâche pour le test', description: 'Tester l\'API' };
 
     const response = await request(server)
@@ -47,18 +58,22 @@ describe('API /api/tasks', () => {
     expect(responseData.description).toBe(newTask.description);
 
     taskId = responseData.id; // Sauvegarde l'ID de la tâche pour les tests suivants
+
+    done(); // Signale que le test est terminé
   });
 
-  test('GET retourne la liste des tâches', async () => {
+  test('GET retourne la liste des tâches', async (done) => {
     const response = await request(server)
       .get('/api/tasks')
       .expect(200); // Vérifier que le code de statut est 200
 
     const responseData = response.body;
     expect(Array.isArray(responseData)).toBe(true); // Vérifie que c'est un tableau
+
+    done(); // Signale que le test est terminé
   });
 
-  test('PUT met à jour le statut d\'une tâche', async () => {
+  test('PUT met à jour le statut d\'une tâche', async (done) => {
     const updatedTask = { id: taskId, status: 'COMPLETED' };
 
     const response = await request(server)
@@ -68,9 +83,11 @@ describe('API /api/tasks', () => {
 
     const responseData = response.body;
     expect(responseData.status).toBe(updatedTask.status); // Vérifie que le statut a bien été mis à jour
+
+    done(); // Signale que le test est terminé
   });
 
-  test('DELETE supprime une tâche existante', async () => {
+  test('DELETE supprime une tâche existante', async (done) => {
     const response = await request(server)
       .delete('/api/tasks')
       .send({ id: taskId }) // Envoi de l'ID de la tâche à supprimer
@@ -78,5 +95,7 @@ describe('API /api/tasks', () => {
 
     const responseData = response.body;
     expect(responseData.message).toBe('Tâche supprimée'); // Vérifie le message de confirmation
+
+    done(); // Signale que le test est terminé
   });
 });

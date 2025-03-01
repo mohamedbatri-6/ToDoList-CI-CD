@@ -1,11 +1,14 @@
-import { PrismaClient } from "@prisma/client";
+const { PrismaClient } = require('@prisma/client'); // Remplace import par require
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+async function GET() {
   try {
     const tasks = await prisma.task.findMany();
-    return Response.json(tasks);
+    return new Response(JSON.stringify(tasks), {
+      status: 200,
+      headers: { "Content-Type": "application/json" }
+    });
   } catch (error) {
     return new Response(JSON.stringify({ error: "Erreur lors de la récupération des tâches" }), {
       status: 500,
@@ -14,13 +17,16 @@ export async function GET() {
   }
 }
 
-export async function POST(req) {
+async function POST(req) {
   try {
     const { name, description } = await req.json();
     const newTask = await prisma.task.create({
       data: { name, description, status: "PENDING" },
     });
-    return Response.json(newTask);
+    return new Response(JSON.stringify(newTask), {
+      status: 201,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     return new Response(JSON.stringify({ error: "Erreur lors de l'ajout de la tâche" }), {
       status: 500,
@@ -29,14 +35,17 @@ export async function POST(req) {
   }
 }
 
-export async function PUT(req) {
+async function PUT(req) {
   try {
     const { id, status } = await req.json();
     const updatedTask = await prisma.task.update({
       where: { id },
       data: { status },
     });
-    return Response.json(updatedTask);
+    return new Response(JSON.stringify(updatedTask), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     return new Response(JSON.stringify({ error: "Erreur lors de la mise à jour de la tâche" }), {
       status: 500,
@@ -45,7 +54,7 @@ export async function PUT(req) {
   }
 }
 
-export async function DELETE(req) {
+async function DELETE(req) {
   try {
     const { id } = await req.json();
     await prisma.task.delete({ where: { id } });
@@ -60,3 +69,5 @@ export async function DELETE(req) {
     });
   }
 }
+
+module.exports = { GET, POST, PUT, DELETE }; // Utilise module.exports

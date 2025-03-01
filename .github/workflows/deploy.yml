@@ -42,6 +42,10 @@ jobs:
           scp -i ~/.ssh/id_rsa node_modules.tar.gz ubuntu@98.81.60.249:/home/ubuntu/ToDoList-CI-CD/
           ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && tar -xzf node_modules.tar.gz && rm node_modules.tar.gz"
 
+      - name: Executer test d'imtegration
+        run: |
+          ssh -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm run test:frontend" 
+
       - name: build du projet
         run: |
           ssh   -i ~/.ssh/id_rsa ubuntu@98.81.60.249 "cd /home/ubuntu/ToDoList-CI-CD && npm run build"

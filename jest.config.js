@@ -11,7 +11,8 @@
    moduleNameMapper: {
      '^@/app/(.*)$': '<rootDir>/src/app/$1',
      '^@/components/(.*)$': '<rootDir>/src/app/components/$1'
-   }
+   },
+   testMatch: ['<rootDir>/__tests__/Home.test.js'],
  }
 
  module.exports = createJestConfig(customJestConfig)

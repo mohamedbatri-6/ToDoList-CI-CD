@@ -34,7 +34,7 @@ jobs:
 
 
       - name: Installer les dépendances en local
-        run: npm ci
+        run: npm install
  
       - name: Transférer les dépendances
         run: |
